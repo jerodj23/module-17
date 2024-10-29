@@ -1,12 +1,9 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const UserRoutes_1 = __importDefault(require("./UserRoutes"));
-const thoughtRoutes_1 = __importDefault(require("./thoughtRoutes"));
-const router = express_1.default.Router();
-router.use('/users', UserRoutes_1.default);
-router.use('/thoughts', thoughtRoutes_1.default);
-exports.default = router;
+import express from "express";
+import userRoutes from "./userRoutes";
+import thoughtRoutes from "./thoughtRoutes";
+const router = express.Router();
+// User routes
+router.use("/users", userRoutes);
+// Thought routes
+router.use("/thoughts", thoughtRoutes);
+export default router;

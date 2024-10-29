@@ -1,89 +1,79 @@
-import { User, Thought } from '../models';
-import { Request, Response } from 'express';
-
-// Define type for route parameters
-interface ThoughtParams {
-    thoughtId: string; // Specify that thoughtId is a string
-}
+import { Request, Response } from "express";
+import User from '../models/User.js';
+import Thought from '../models/Thought.js';
 
 export default {
     // Get all thoughts
-    getAllThoughts: async (req: Request, res: Response) => {
+    getAllThoughts: async (req: Request, res: Response): Promise<void> => {
         try {
-            const thoughts = await Thought.find();
+            const thoughts = await Thought.find({});
             res.json(thoughts);
         } catch (err) {
-            console.log(err); // Log the error
+            console.log(err);
             res.status(500).json(err);
         }
     },
-
-    // Get a single thought by its _id
-    getThoughtById: async (req: Request<ThoughtParams>, res: Response) => {
+    // GET a single thought by its _id
+    getThoughtById: async (req: Request, res: Response): Promise<void> => {
+        const { thoughtId } = req.params;
         try {
-            const thought = await Thought.findById(req.params.thoughtId)
-                .select("-__v");
+            const thought = await Thought.findById(thoughtId).select("-__v");
             if (!thought) {
                 res.status(404).json({ message: "Thought not found" });
                 return;
             }
             res.json(thought);
         } catch (err) {
-            console.log(err); // Log the error
+            console.log(err);
             res.status(500).json(err);
         }
     },
-
     // Create a new thought
-    createThought: async (req: Request, res: Response) => {
+    createThought: async (req: Request, res: Response): Promise<void> => {
         try {
             const newThought = await Thought.create(req.body);
             res.status(201).json(newThought);
         } catch (err) {
-            console.log(err); // Log the error
+            console.log(err);
             res.status(500).json(err);
         }
     },
-
     // Update a thought by its _id
-    updateThought: async (req: Request<ThoughtParams>, res: Response) => {
+    updateThought: async (req: Request, res: Response): Promise<void> => {
+        const { thoughtId } = req.params;
         try {
-            const thought = await Thought.findOneAndUpdate(
-                { _id: req.params.thoughtId },
-                { $set: req.body },
-                { new: true }
-            );
+            const thought = await Thought.findByIdAndUpdate(thoughtId, req.body, { new: true });
             if (!thought) {
                 res.status(404).json({ message: "Thought not found" });
                 return;
             }
             res.json(thought);
         } catch (err) {
-            console.log(err); // Log the error
+            console.log(err);
             res.status(500).json(err);
         }
     },
-
     // Delete a thought by its _id
-    deleteThought: async (req: Request<ThoughtParams>, res: Response) => {
+    deleteThought: async (req: Request, res: Response): Promise<void> => {
+        const { thoughtId } = req.params;
         try {
-            const thought = await Thought.findOneAndDelete({ _id: req.params.thoughtId });
+            const thought = await Thought.findByIdAndDelete(thoughtId);
             if (!thought) {
                 res.status(404).json({ message: "Thought not found" });
                 return;
             }
             res.json(thought);
         } catch (err) {
-            console.log(err); // Log the error
+            console.log(err);
             res.status(500).json(err);
         }
     },
-
     // Add a reaction to a thought
-    addReaction: async (req: Request<ThoughtParams>, res: Response) => {
+    addReaction: async (req: Request, res: Response): Promise<void> => {
+        const { thoughtId } = req.params;
         try {
-            const thought = await Thought.findOneAndUpdate(
-                { _id: req.params.thoughtId },
+            const thought = await Thought.findByIdAndUpdate(
+                thoughtId,
                 { $push: { reactions: req.body } },
                 { new: true }
             );
@@ -93,17 +83,17 @@ export default {
             }
             res.json(thought);
         } catch (err) {
-            console.log(err); // Log the error
+            console.log(err);
             res.status(500).json(err);
         }
     },
-
-    // Delete a reaction from a thought by reactionId
-    deleteReaction: async (req: Request<ThoughtParams>, res: Response) => {
+    // DELETE a reaction from a thought by reactionId
+    deleteReaction: async (req: Request, res: Response): Promise<void> => {
+        const { thoughtId, reactionId } = req.params;
         try {
-            const thought = await Thought.findOneAndUpdate(
-                { _id: req.params.thoughtId },
-                { $pull: { reactions: { reactionId: req.params.reactionId } } },
+            const thought = await Thought.findByIdAndUpdate(
+                thoughtId,
+                { $pull: { reactions: { reactionId } } },
                 { new: true }
             );
             if (!thought) {
@@ -112,7 +102,7 @@ export default {
             }
             res.json(thought);
         } catch (err) {
-            console.log(err); // Log the error
+            console.log(err);
             res.status(500).json(err);
         }
     },

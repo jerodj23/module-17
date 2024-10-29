@@ -1,27 +1,37 @@
 import express from "express";
-import userController from "../../controllers/userController";
+import userController from "../../controllers/userController.js";
+
+const { 
+    getAllUsers, 
+    getUserById, 
+    createUser, 
+    updateUser, 
+    deleteUser, 
+    addFriend, 
+    deleteFriend 
+} = userController; 
 
 const router = express.Router();
 
 // GET all users
-router.get("/", userController.getAllUsers);
+router.get("/", getAllUsers);
 
-// GET a single user by its _id
-router.get("/:userId", userController.getUserById);
+// GET a single user by its _id and populated thoughts and friend data
+router.get("/:userId", getUserById);
 
 // POST a new user
-router.post("/", userController.createUser);
+router.post("/", createUser);
 
 // PUT to update a user by its _id
-router.put("/:userId", userController.updateUser);
+router.put("/:userId", updateUser);
 
 // DELETE to remove user by its _id
-router.delete("/:userId", userController.deleteUser);
+router.delete("/:userId", deleteUser);
 
 // Add a friend to a User's friend list
-router.post("/:userId/friends/:friendId", userController.addFriend);
+router.post("/:userId/friends/:friendId", addFriend);
 
 // Remove a friend from a User's friend list
-router.delete("/:userId/friends/:friendId", userController.deleteFriend);
+router.delete("/:userId/friends/:friendId", deleteFriend);
 
 export default router;

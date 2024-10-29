@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,14 +7,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-//Import modules from Mongoose
-const models_1 = require("../models"); // Adjust the path as necessary
-exports.default = {
+import User from '../models/User.js';
+export default {
     // Get all users
     getAllUsers: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const users = yield models_1.User.find();
+            const users = yield User.find();
             res.json(users);
         }
         catch (err) {
@@ -23,10 +20,10 @@ exports.default = {
             res.status(500).json(err);
         }
     }),
-    //Get a single userby its _id with a thought and friend data
+    // Get a single user by its _id with thought and friend data
     getUserById: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const user = yield models_1.User.findById(req.params.userId)
+            const user = yield User.findById(req.params.userId) // TypeScript should now recognize userId as a string
                 .populate("thoughts")
                 .populate("friends")
                 .select("-__v");
@@ -37,40 +34,41 @@ exports.default = {
             res.json(user);
         }
         catch (err) {
-            console.log(err); //log the error
+            console.log(err); // Log the error
             res.status(500).json(err);
         }
     }),
-    //Post a new user
+    // Post a new user
     createUser: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const newUser = yield models_1.User.create(req.body);
+            const newUser = yield User.create(req.body);
             res.status(201).json(newUser);
         }
         catch (err) {
-            console.log(err); //log the error
+            console.log(err); // Log the error
             res.status(500).json(err);
         }
     }),
-    //Put to update a user by its _id
+    // Put to update a user by its _id
     updateUser: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const user = yield models_1.User.findOneAndUpdate({ _id: req.params.userId }, { $set: req.body }, { new: true });
+            const user = yield User.findOneAndUpdate({ _id: req.params.userId }, { $set: req.body }, { new: true });
             if (!user) {
-                res.status(404).jspn({ message: "User not found" });
+                res.status(404).json({ message: "User not found" });
                 return;
             }
             res.json(user);
         }
         catch (err) {
-            console.log(err); //log the error
+            console.log(err); // Log the error
             res.status(500).json(err);
         }
     }),
-    //DELETE to remove user by its _id
+    // DELETE to remove user by its _id
     deleteUser: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const user = yield models_1.User.findOneAndDelete(req.params.userId);
+            // Wrap userId in an object for the query
+            const user = yield User.findOneAndDelete({ _id: req.params.userId });
             if (!user) {
                 res.status(404).json({ message: "User not found" });
                 return;
@@ -78,14 +76,14 @@ exports.default = {
             res.json(user);
         }
         catch (err) {
-            console.log(err); //log the error
+            console.log(err); // Log the error
             res.status(500).json(err);
         }
     }),
-    //Add a friend to a user friend list
+    // Add a friend to a user's friend list
     addFriend: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const user = yield models_1.User.findOneAndUpdate({ _id: req.params.userId }, { $addToSet: { friends: req.params.friendId } }, { new: true });
+            const user = yield User.findOneAndUpdate({ _id: req.params.userId }, { $addToSet: { friends: req.params.friendId } }, { new: true });
             if (!user) {
                 res.status(404).json({ message: "User not found" });
                 return;
@@ -93,14 +91,14 @@ exports.default = {
             res.json(user);
         }
         catch (err) {
-            console.log(err); //log the error
+            console.log(err); // Log the error
             res.status(500).json(err);
         }
     }),
-    //Remove a friend from a user friend list
+    // Remove a friend from a user's friend list
     deleteFriend: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const user = yield models_1.User.findOneAndUpdate({ _id: req.params.userId }, { $pull: { friends: req.params.friendId } }, { new: true });
+            const user = yield User.findOneAndUpdate({ _id: req.params.userId }, { $pull: { friends: req.params.friendId } }, { new: true });
             if (!user) {
                 res.status(404).json({ message: "User not found" });
                 return;
@@ -108,7 +106,7 @@ exports.default = {
             res.json(user);
         }
         catch (err) {
-            console.log(err); //log the error
+            console.log(err); // Log the error
             res.status(500).json(err);
         }
     }),

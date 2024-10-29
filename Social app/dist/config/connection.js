@@ -1,11 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = require("mongoose");
+import { connect, connection } from "mongoose";
 // Connect to the MongoDB database
-(0, mongoose_1.connect)("mongodb://127.0.0.1:27017/sociallinkDB", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
+connect("mongodb://127.0.0.1:27017/sociallinkDB")
     .then(() => {
     console.log("MongoDB connected successfully");
 })
@@ -13,4 +8,4 @@ const mongoose_1 = require("mongoose");
     console.error("MongoDB connection error:", err);
 });
 // Export the connection for use in other parts of the application
-exports.default = mongoose_1.connection;
+export default connection;

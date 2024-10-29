@@ -1,10 +1,10 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IUser extends Document {
     username: string;
     email: string;
-    thoughts: mongoose.Types.ObjectId[];
-    friends: mongoose.Types.ObjectId[];
+    friends: string[];
+    thoughts: string[];
 }
 
 const userSchema = new Schema<IUser>({
@@ -12,30 +12,21 @@ const userSchema = new Schema<IUser>({
         type: String,
         required: true,
         unique: true,
-        trim: true,
     },
     email: {
         type: String,
         required: true,
         unique: true,
-        match: /.+\@.+\..+/, // Simple email validation
     },
-    thoughts: [
-        {
-            type: mongoose.Types.ObjectId,
-            ref: "Thought",
-        },
-    ],
-    friends: [
-        {
-            type: mongoose.Types.ObjectId,
-            ref: "User",
-        },
-    ],
+    friends: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+    }],
+    thoughts: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Thought',
+    }],
 });
 
-// Create the User model
-const User = mongoose.model<IUser>("User", userSchema);
-
-// Export the User model
-export default User;
+const User = mongoose.model<IUser>('User', userSchema);
+export default User; // Ensure you are exporting the model as default
